@@ -1,5 +1,6 @@
 ﻿open System.Linq
 open Microsoft.EntityFrameworkCore
+open LinqToDB.EntityFrameworkCore
 open FSharpEFCoreRecordIssue.Db
 
 
@@ -40,3 +41,10 @@ tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| Rating = x.Rating; 
 tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| Url = x.Url; Rating = x.Rating |}))
 tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| Url = x.Url; PostCount = x.Posts.Count |}))
 tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| PostCount = x.Posts.Count; Url = x.Url |}))
+
+
+// With  linq2db
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| Rating = x.Rating; Url = x.Url |}))
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| Url = x.Url; Rating = x.Rating |}))
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| Url = x.Url; PostCount = x.Posts.Count |}))
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| PostCount = x.Posts.Count; Url = x.Url |}))

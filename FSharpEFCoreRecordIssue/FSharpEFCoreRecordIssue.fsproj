@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="linq2db.EntityFrameworkCore" Version="5.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FSharpEFCoreRecordIssue.Db\FSharpEFCoreRecordIssue.Db.csproj" />
   </ItemGroup>
 
