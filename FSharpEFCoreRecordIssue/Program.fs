@@ -27,15 +27,17 @@ if db.Blogs.Count() = 0 then
     db.Blogs.AddRange blogs |> ignore
     db.SaveChanges() |> ignore
 
+let mutable count = 0
 
 let tryRun fn =
     try 
-        printfn "========================================================"
+        count <- count + 1
+        printfn $"=======================[{count}]==============================="
         fn() |> Seq.iter (printfn "%A")
-        printfn "========================================================"
     with ex ->
         printfn $"Error: {ex.Message}"
-
+    printfn $"=======================[{count}]==============================="
+        
 
 tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| Rating = x.Rating; Url = x.Url |}))
 tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| Url = x.Url; Rating = x.Rating |}))
@@ -43,8 +45,24 @@ tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| Url = x.Url; PostCo
 tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> {| PostCount = x.Posts.Count; Url = x.Url |}))
 
 
+// The issue not just hanppen to annonymous record, it also hanpens to normal record
+type BlogBrif = { Rating: int; Url: string }
+type BlogBrifWithCount = { PostCount: int; Url: string }
+
+tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> { Rating = x.Rating; Url = x.Url }))
+tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> { Url = x.Url; Rating = x.Rating }))
+tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> { Url = x.Url; PostCount = x.Posts.Count }))
+tryRun (fun () -> db.Blogs.AsNoTracking().Select(fun x -> { PostCount = x.Posts.Count; Url = x.Url }))
+
+
+
 // With  linq2db
 tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| Rating = x.Rating; Url = x.Url |}))
 tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| Url = x.Url; Rating = x.Rating |}))
 tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| Url = x.Url; PostCount = x.Posts.Count |}))
 tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> {| PostCount = x.Posts.Count; Url = x.Url |}))
+
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> { Rating = x.Rating; Url = x.Url }))
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> { Url = x.Url; Rating = x.Rating }))
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> { Url = x.Url; PostCount = x.Posts.Count }))
+tryRun (fun () -> db.Blogs.ToLinqToDB().Select(fun x -> { PostCount = x.Posts.Count; Url = x.Url }))
